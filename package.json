@@ -1,0 +1,92 @@
+{
+  "name": "unplugin-svg2icon",
+  "version": "0.1.0",
+  "packageManager": "pnpm@7.1.1",
+  "description": "Register global imports on demand for Vite and Webpack",
+  "keywords": [
+    "unplugin",
+    "vite",
+    "webpack",
+    "rollup",
+    "transform"
+  ],
+  "homepage": "https://github.com/antfu/unplugin-svg2icon#readme",
+  "bugs": {
+    "url": "https://github.com/antfu/unplugin-svg2icon/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antfu/unplugin-svg2icon.git"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./vite": {
+      "require": "./dist/vite.js",
+      "import": "./dist/vite.mjs"
+    },
+    "./webpack": {
+      "require": "./dist/webpack.js",
+      "import": "./dist/webpack.mjs"
+    },
+    "./rollup": {
+      "require": "./dist/rollup.js",
+      "import": "./dist/rollup.mjs"
+    },
+    "./nuxt": {
+      "require": "./dist/nuxt.js",
+      "import": "./dist/nuxt.mjs"
+    },
+    "./types": {
+      "require": "./dist/types.js",
+      "import": "./dist/types.mjs"
+    },
+    "./*": "./*"
+  },
+  "files": [
+    "dist",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch src",
+    "build:fix": "esno scripts/postbuild.ts",
+    "lint": "eslint .",
+    "play:vite": "npm -C playground run dev",
+    "play:rollup": "npm -C playground run rollup",
+    "prepublishOnly": "npm run build",
+    "release": "easy-release",
+    "start": "esno src/index.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@iconify/tools": "^2.0.18",
+    "@iconify/utils": "^1.0.33",
+    "unplugin": "^0.6.3"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.23.1",
+    "@types/node": "^17.0.34",
+    "@types/throttle-debounce": "^5.0.0",
+    "easy-release": "^0.0.8",
+    "eslint": "^8.15.0",
+    "esno": "^0.16.3",
+    "fast-glob": "^3.2.11",
+    "nodemon": "^2.0.16",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.74.0",
+    "throttle-debounce": "^5.0.0",
+    "tsup": "^5.12.8",
+    "typescript": "^4.6.4",
+    "vite": "^2.9.9",
+    "vitest": "^0.12.6",
+    "webpack": "^5.72.1",
+    "@iconify/types": "^1.1.0"
+  }
+}

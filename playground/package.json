@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "rollup": "rollup -c"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.3.3",
+    "rollup-plugin-dev": "^2.0.4",
+    "vite": "^2.9.9",
+    "vite-plugin-inspect": "^0.5.0"
+  }
+}
