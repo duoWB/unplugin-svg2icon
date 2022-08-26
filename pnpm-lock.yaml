@@ -11,7 +11,7 @@ importers:
       '@types/fs-extra': ^9.0.13
       '@types/node': ^17.0.34
       '@types/throttle-debounce': ^5.0.0
-      easy-release: ^0.0.8
+      easy-release: ^0.0.10
       eslint: ^8.15.0
       esno: ^0.16.3
       fast-glob: ^3.2.11
@@ -37,7 +37,7 @@ importers:
       '@types/fs-extra': 9.0.13
       '@types/node': 17.0.34
       '@types/throttle-debounce': 5.0.0
-      easy-release: 0.0.8
+      easy-release: 0.0.10
       eslint: 8.15.0
       esno: 0.16.3
       fast-glob: 3.2.11
@@ -1737,8 +1737,8 @@ packages:
     resolution: {integrity: sha1-7gHdHKwO08vH/b6jfcCo8c4ALOI=}
     dev: true
 
-  /easy-release/0.0.8:
-    resolution: {integrity: sha512-3H7AO06mEuMSwrpjbWMAJo4zMw5Se6GYUohzQSkopK6HeMsrCJ6eelbHqxQeM+MA4s+iFXIPCpiT4Wco0mvMUw==}
+  /easy-release/0.0.10:
+    resolution: {integrity: sha512-iZtIRet5qu5nk4V3rEip/sqZyA4Qhxw9Zx2Zk1t5hlhoBVs7sLdE7JR71JvxZsvLwAeHiDBEEnJRs08PchhRuQ==}
     hasBin: true
     dependencies:
       conventional-changelog: 3.1.25
