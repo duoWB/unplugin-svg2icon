@@ -8,16 +8,19 @@
     "vite",
     "webpack",
     "rollup",
-    "transform"
+    "transform",
+    "svg",
+    "font",
+    "icon"
   ],
-  "homepage": "https://github.com/antfu/unplugin-svg2icon#readme",
+  "homepage": "https://github.com/duowb/unplugin-svg2icon#readme",
   "bugs": {
-    "url": "https://github.com/antfu/unplugin-svg2icon/issues"
+    "url": "https://github.com/duowb/unplugin-svg2icon/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antfu/unplugin-svg2icon.git"
+    "url": "git+https://github.com/duowb/unplugin-svg2icon.git"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",

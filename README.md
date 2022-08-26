@@ -9,7 +9,7 @@ Starter template for [unplugin](https://github.com/unjs/unplugin).
 To use this template, clone it down using:
 
 ```bash
-npx degit antfu/unplugin-svg2icon my-unplugin
+npx degit duowb/unplugin-svg2icon my-unplugin
 ```
 
 And do a global replace of `unplugin-svg2icon` with your plugin name.
