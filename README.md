@@ -1,45 +1,32 @@
 # unplugin-svg2icon
 
-[![NPM version](https://img.shields.io/npm/v/unplugin-svg2icon?color=a1b858&label=)](https://www.npmjs.com/package/unplugin-svg2icon)
+将svg转换成css图标
 
-Starter template for [unplugin](https://github.com/unjs/unplugin).
 
-## Template Usage
 
-To use this template, clone it down using:
 
-```bash
-npx degit duowb/unplugin-svg2icon my-unplugin
-```
-
-And do a global replace of `unplugin-svg2icon` with your plugin name.
-
-Then you can start developing your unplugin 🔥
-
-To test your plugin, run: `pnpm run dev`
-To release a new version, run: `pnpm run release`
-
-## Install
+## 安装
 
 ```bash
 npm i unplugin-svg2icon
 ```
 
+## 使用
 <details>
 <summary>Vite</summary><br>
 
 ```ts
 // vite.config.ts
-import Starter from 'unplugin-svg2icon/vite'
+import Svg2icon from 'unplugin-svg2icon/vite'
 
 export default defineConfig({
   plugins: [
-    Starter({ /* options */ }),
+    Svg2icon({ /* options */ }),
   ],
 })
 ```
 
-Example: [`playground/`](./playground/)
+Example: [`playground/`](./playground/vite.config.ts)
 
 <br></details>
 
@@ -106,3 +93,53 @@ module.exports = {
 ```
 
 <br></details>
+
+
+## 参数
+`svgs`: svg 存放地址
+
+`outputDir`: 生成的`icons.css、index.html`路径，默认是项目根地址
+
+`handleSvg`: svg 处理方法，可以在这里自定义操作
+
+`cssPrefix`: 生成css的前缀
+
+## options 示例
+``` 
+{
+  svgs: ['./static', './icons/svg/*.svg'],
+  outputDir: 'assets',
+  cssPrefix: 'dd',
+  handleSvg({ svg, file }) {
+    if (svg.viewBox.width > 100 || svg.viewBox.height > 100) {
+      return {
+        width: 24,
+        height: 24,
+      }
+    }
+    else if (file === 'select_menu_icon') {
+      return {
+        isColor: true,
+      }
+    }
+    else if (file === 'all') {
+      return {
+        cssProps: {
+          transform: 'scale(1.5)',
+        },
+      }
+    }
+    else if (path.includes('static/')) {
+      return {
+        cssPrefix: 'static',
+      }
+    }
+  },
+}
+```
+
+## 感谢
+
+ - [unplugin](https://github.com/unjs/unplugin)
+ - [unocss](https://github.com/unocss/unocss)
+ - [iconify/tools](https://github.com/iconify/tools)

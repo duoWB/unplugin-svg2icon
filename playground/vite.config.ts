@@ -8,7 +8,8 @@ export default defineConfig({
     Unplugin({
       svgs: ['./static', './icons/svg/*.svg'],
       outputDir: 'assets',
-      handleSvg({ svg, file }) {
+      cssPrefix: 'dd',
+      handleSvg({ svg, file, path }) {
         if (svg.viewBox.width > 100 || svg.viewBox.height > 100) {
           return {
             width: 24,
@@ -25,6 +26,11 @@ export default defineConfig({
             cssProps: {
               transform: 'scale(1.5)',
             },
+          }
+        }
+        else if (path.includes('static/')) {
+          return {
+            cssPrefix: 'static',
           }
         }
       },
