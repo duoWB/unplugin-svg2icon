@@ -93,8 +93,5 @@
     "vite": "^2.9.9",
     "vitest": "^0.12.6",
     "webpack": "^5.72.1"
-  },
-  "publishConfig": {
-    "registry": "https://www.npmjs.com"
   }
 }
