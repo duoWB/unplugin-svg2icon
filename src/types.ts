@@ -7,7 +7,7 @@ export type ss = Strings | string
 export type Awaitable<T> = T | PromiseLike<T>
 
 export type HandleSvgParams = {
-  path: string
+  svgPath: string
   svg: SVG
   cssPrefix?: string
 } & ImportDirectoryFileEntry
@@ -33,6 +33,16 @@ export interface HandleSvgResult {
   transformType?: 'base64' | 'svg'
   /** is colorful */
   isColor?: boolean
+  /**
+   * custom css props
+   */
+  cssProps?: Record<string, any>
+}
+export interface GetHandleSvgResult extends HandleSvgResult {
+  prefix: string | undefined
+  width: string
+  height: string
+  iconName: string
 }
 
 export interface Options {
@@ -40,10 +50,16 @@ export interface Options {
   customizations?: IconCustomizations
   cssPrefix?: string
   outputDir?: string
-  handleSvg?: (svgInfo: HandleSvgParams) => Awaitable<HandleSvgResult>
+  handleSvg?: (svgInfo: HandleSvgParams) => Awaitable<HandleSvgResult> | undefined
 }
 export type LocalOptions = Options & {
   svgPaths: Strings
 }
 
 export type BuildFun = (options: LocalOptions) => Promise<void>
+
+export type SvgFilePaths = Map<string, ImportDirectoryFileEntry>
+
+export interface CleanSvgHandle {
+  (name: string, svg: SVG): Promise<void>
+}

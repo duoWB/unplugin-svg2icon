@@ -1,146 +1,72 @@
 import { writeFileSync } from 'node:fs'
-import { encodeSvgForCss } from '@iconify/utils/lib/svg/encode-svg-for-css'
-import {
-  cleanupSVG,
-  importDirectory,
-  isEmptyColor,
-  parseColors,
-  runSVGO,
-} from '@iconify/tools'
+import { ensureDirSync } from 'fs-extra'
 import type { ImportDirectoryFileEntry } from '@iconify/tools/lib/import/directory'
-import type { LocalOptions } from '../types'
+import type { LocalOptions, Strings } from '../types'
+import encodeSvg from './encodeSvg'
+import { clearSvg, getAllIconSet, getHandleSvgResult } from './utils'
 
-export default async function ({
-  svgPaths,
-  cssPrefix,
-  handleSvg,
-}: LocalOptions) {
+export default async function (params: LocalOptions) {
+  const { svgPaths, outputDir } = params
+  // save svg fileInfo
   const svgFilePaths = new Map<string, ImportDirectoryFileEntry>()
-  const missingSvg = new Set<string>()
-  const iconSet = (
-    await Promise.all(
-      svgPaths.map(async (i) => {
-        const res = await importDirectory(i, {
-          keyword: (file) => {
-            if (file.ext === '.svg') {
-              svgFilePaths.set(file.file, file)
-              missingSvg.add(file.file)
-              return file.file
-            }
-          },
-          ignoreImportErrors: false,
-        })
-        return res
-      }),
-    )
-  ).at(0)
-  let rootStr = ''
-  let iconClass = ''
-  await iconSet?.forEach(async (name, type) => {
-    if (type !== 'icon')
-      return
+  const allIconSet = await getAllIconSet(svgPaths, svgFilePaths)
 
-    const svg = iconSet.toSVG(name)
-    if (!svg) {
-      // Invalid icon
-      iconSet.remove(name)
-      return
-    }
-    missingSvg.delete(name)
-    let handleResult
-    const svgFilePath = svgFilePaths.get(name)
-    if (svgFilePath && handleSvg) {
-      handleResult = await handleSvg({
-        ...svgFilePath,
-        path:
-          svgFilePath.path
-          + svgFilePath.subdir
-          + svgFilePath.file
-          + svgFilePath.ext,
-        cssPrefix,
-        svg,
+  let cssVars = ''
+  let cssContents = ''
+  const cssIconNames: Strings = []
+
+  await Promise.all(
+    allIconSet.map(async (iconSet) => {
+      await clearSvg(iconSet, async (name, svg) => {
+        const handleResult = await getHandleSvgResult(
+          svgFilePaths,
+          params,
+          name,
+          svg,
+        )
+
+        const { cssContent, cssVar } = encodeSvg(handleResult, svg)
+        cssVars += `
+        ${cssVar}
+        `
+
+        cssContents += cssContent
+        cssIconNames.push(handleResult.iconName)
       })
-    }
+    }),
+  )
 
-    // Clean up and optimise icons
-    try {
-      await cleanupSVG(svg)
-      await parseColors(svg, {
-        defaultColor: 'currentColor',
-        callback: (_attr, colorStr, color) => {
-          return !color || isEmptyColor(color) ? colorStr : 'currentColor'
-        },
-      })
-      await runSVGO(svg)
-    }
-    catch (err) {
-      // Invalid icon
-      console.error(`Error parsing ${name}:`, err)
-      iconSet.remove(name)
-      return
-    }
-
-    // Update icon
-    iconSet.fromSVG(name, svg)
-
-    const prefix = handleResult?.cssPrefix || cssPrefix
-
-    const iconName = `${prefix ? `${prefix}-` : ''}${name}`
-    let width = handleResult?.width || svg.viewBox.width
-    let height = handleResult?.height || svg.viewBox.height
-    if (typeof width === 'number')
-      width = `${width}px`
-    if (typeof height === 'number')
-      height = `${height}px`
-
-    let dataUri = `data:image/svg+xml;utf8,${encodeSvgForCss(svg.toString())}}`
-    if (handleResult?.transformType === 'base64') {
-      dataUri = `data:image/svg+xml;base64,${Buffer.from(
-        svg.toString(),
-      ).toString('base64')}`
-    }
-
-    rootStr += `
-      --${iconName}: url("${dataUri}");`
-
-    if (handleResult?.isColor) {
-      iconClass += `
-      .${iconName} {
-        background: var(--${iconName}) no-repeat;
-        background-size: 100% 100%;
-        background-color: transparent;
-        width:  ${width}px;
-        height: ${height}px;
-      }
-    `
-    }
-    else {
-      iconClass += `
-        .${iconName} {
-          mask: var(--${iconName}) no-repeat;
-          mask-size: 100% 100%;
-          -webkit-mask: var(--${iconName}) no-repeat;
-          -webkit-mask-size: 100% 100%;
-          background-color: currentColor;
-          display: inline-block;
-          width:  ${width};
-          height: ${height};
-        }
-      `
-    }
-  })
-  console.log(`
-total: ${svgFilePaths.size}
-css-var-total: ${iconSet?.count()}
-missingSvg: ${[...missingSvg].map(item => `${item}.svg`)}
-`)
+  let outputCssPath = 'icons.css'
+  let outputHtmlPath = 'index.html'
+  if (outputDir) {
+    ensureDirSync(outputDir)
+    outputCssPath = `${outputDir}/${outputCssPath}`
+    outputHtmlPath = `${outputDir}/${outputHtmlPath}`
+  }
 
   writeFileSync(
-    'icons.css',
+    outputCssPath,
     `:root{
-      ${rootStr}
+      ${cssVars}
   }
-    ${iconClass}
+    ${cssContents}
   `,
+  )
+  writeFileSync(
+    outputHtmlPath,
+    `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./icons.css">
+    <title>Document</title>
+  </head>
+  <body>
+  
+${cssIconNames.map(name => `<i class="${name}"></i>`).join('')}
+  </body>
+  </html>`,
   )
 }
